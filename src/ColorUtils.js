@@ -306,11 +306,18 @@ YlGn: {
 const getColorScheme = (numSegments, max, min=0) => {
   const colorVals =  colorbrewer.PuRd[numSegments];
 
-  const scale = {};
+  const scale = [];
   const step = (max-min)/numSegments;
   let j = 0;
-  for (let i = min ; i < max ; i += step) {
-    scale[Math.floor(i-min)] = colorVals[j++];
+  for (let i = min ; j < numSegments ; i += step) {
+  	let scaleKey;
+
+  	if (Math.abs(i) > 100) scaleKey = Math.floor(i);
+  	else if (Math.abs(i) > 10) scaleKey = Math.round(i * 10) / 10; //1 decimal place
+  	else scaleKey = Math.round(i * 100) / 100; // 2 decimal places
+
+
+    scale.push({ min: scaleKey, color: colorVals[j++] });
   }
 
   return scale;

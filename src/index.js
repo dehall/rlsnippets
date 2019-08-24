@@ -11,7 +11,36 @@ import area from './data/area.json';
 
 const someOtherData = { MA: 12345, NH: 123, ME: 12};
 
-const data = {population, area, someOtherData}
+const getJsonFn = (url, processor=null) => {
+	if (!processor) processor = j => j; // passthru function
+	return (callback) => {
+		fetch(url)
+		  .then(response => response.json())
+		  .then(json => processor(json))
+		  .then(json => callback(json));
+	}
+}
+
+
+const processCdcSmokingData = (json) => {
+	const result = {};
+	const lines2010 = json.data.filter(l => l[8] === '2010');
+	for (const line of lines2010) {
+		const stateName = line[9];
+		if (stateName === 'Virgin Islands' || stateName.startsWith('Nationwide')) continue;
+		const smokeEveryday = line[10];
+		const smokeSomeDays = line[11];
+		result[stateName] = Number(smokeEveryday) + Number(smokeSomeDays);
+	}
+	return result;
+}
+
+const data = {
+	population,
+	area: getJsonFn('https://raw.githubusercontent.com/dehall/rlsnippets/master/src/data/population.json'),
+	smoking: getJsonFn('https://data.cdc.gov/api/views/8zak-ewtm/rows.json?accessType=DOWNLOAD', processCdcSmokingData),
+	someOtherData: Promise.resolve(someOtherData)
+};
 
 ReactDOM.render(<App data={data}/>, document.getElementById('root'));
 
