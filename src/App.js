@@ -1,26 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+import USStatesChoropleth from './USStatesChoropleth';
+
+export default class App extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      value: 'population',
+      data: props.data.population
+    };
+  }
+
+  handleChange = (event) => {
+    this.setState({
+      value: event.target.value,
+      data: this.props.data[event.target.value]
+    });
+  }
+
+render() {
+  return ( 
+    <div className="fullscreen">
+    <select value={this.state.value} onChange={this.handleChange}>
+            <option value="population">Population</option>
+            <option value="area">Area</option>
+            <option value="someOtherData">Some Other Data</option>
+          </select>
+     
+    <USStatesChoropleth key={this.state.value} data={this.state.data} metricName={this.state.value} /> 
     </div>
-  );
+    );
+  }
 }
-
-export default App;
