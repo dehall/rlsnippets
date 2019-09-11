@@ -14,7 +14,7 @@ export default class App extends React.Component {
     this.state = {
       value: 'population',
       data: this.getData(props.data.population),
-      sort: 'keys'
+      sort: props.sort || 'keys'
     };
   }
 
@@ -41,6 +41,10 @@ export default class App extends React.Component {
     const data = this.getData(this.props.data[value]);
     this.setState({ value, data });
   }
+  
+  toggleSort = () => {
+	this.setState({ sort: this.state.sort === 'keys' ? 'values' : 'keys'});
+  }
 
 render() {
   const rows = Object.keys(this.props.data).map(key => <option key={key} value={key}>{key}</option>);
@@ -49,7 +53,7 @@ render() {
 
   if (this.state.sort === 'keys') {
     // compare strings
-    chartData.sort((a, b) => b[0].localeCompare(a[0]));
+    chartData.sort((a, b) => -b[0].localeCompare(a[0]));
   } else {
     // compare numbers
     chartData.sort((a, b) => b[1] - a[1]);
@@ -59,7 +63,7 @@ render() {
 
   const options = {
     title: {
-      text: 'My chart'
+      text: this.state.value
     },
     xAxis: {
           categories: chartData.map(e => e[0]),
@@ -73,13 +77,18 @@ render() {
     <div className="fullscreen">
     <select value={this.state.value} onChange={this.handleChange}>
       { rows }
-    </select>
-     
-    {/* <USStatesChoropleth data={this.state.data} metricName={this.state.value} /> */}
+    </select><button onClick={this.toggleSort}>
+            Sort by {this.state.sort === 'keys' ? 'values' : 'keys'}
+          </button>
+     <div style={{height: '50%'}}>
+    <USStatesChoropleth data={this.state.data} metricName={this.state.value} />
+	</div>
+	<div style={{height: '50%'}}>
     <HighchartsReact
       highcharts={Highcharts}
       options={options}
     />
+	</div>
     </div>
     );
   }

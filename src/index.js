@@ -35,14 +35,29 @@ const processCdcSmokingData = (json) => {
 	return result;
 }
 
+const conditions = [];
+
 const data = {
 	population,
-	area: getJsonFn('https://raw.githubusercontent.com/dehall/rlsnippets/master/src/data/population.json'),
 	smoking: getJsonFn('https://data.cdc.gov/api/views/8zak-ewtm/rows.json?accessType=DOWNLOAD', processCdcSmokingData),
 	someOtherData: Promise.resolve(someOtherData)
 };
 
-ReactDOM.render(<App data={data}/>, document.getElementById('root'));
+if (process.env.REACT_APP_SERVER) {
+	const serverBase = process.env.REACT_APP_SERVER;
+
+	fetch(`${serverBase}/prevalence`)
+		.then(response => response.json())
+		.then(json => {
+			const conditions = Object.keys(json);
+			conditions.sort((a,b) => json[b] - json[a]);
+			conditions.forEach(k => data[k] = getJsonFn(`${serverBase}/prevalence?display=${k}`));
+			ReactDOM.render(<App data={data}/>, document.getElementById('root'));
+		});
+} else {
+	ReactDOM.render(<App data={data}/>, document.getElementById('root'));
+}
+
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
