@@ -42,7 +42,7 @@ const featureStyle = (feature, data, colorScale, defaultValue=NaN) => {
 
 const getLegend = (colorScale) => {
   const legendRows = [];
-  for (let i = 0; i < colorScale.length; i++) { // -1 because we bound the legend in [min, max]
+  for (let i = 0; i < colorScale.length; i++) {
     const row = (
       <div key={"legend-"+i}>
       <i style={{ background: colorScale[i].color }}></i>
