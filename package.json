@@ -4,7 +4,7 @@
   "private": true,
   "homepage": "http://dehall.github.io/rlsnippets",
   "dependencies": {
-    "highcharts": "^7.2.0",
+    "highcharts": "^9.0.0",
     "highcharts-react-official": "^2.2.2",
     "leaflet": "^1.5.1",
     "react": "^16.9.0",
